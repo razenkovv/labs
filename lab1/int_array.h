@@ -3,6 +3,7 @@
 
 #include "array.h"
 
+
 int *int_read_input(size_t *dimension);
 void int_print_output(struct ArrayN_1 *output);
 void int_free_struct(struct ArrayN_1 *a);
