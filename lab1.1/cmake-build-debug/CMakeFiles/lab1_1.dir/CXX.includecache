@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Ivan/programming/labs/lab1.1/List.h
+iostream
+-
+cstdint
+-
+memory
+-
+
+C:/Users/Ivan/programming/labs/lab1.1/Sequences.h
+Vector.h
+C:/Users/Ivan/programming/labs/lab1.1/Vector.h
+List.h
+C:/Users/Ivan/programming/labs/lab1.1/List.h
+memory
+-
+iostream
+-
+
+C:/Users/Ivan/programming/labs/lab1.1/Vector.h
+iostream
+-
+cstdint
+-
+memory
+-
+
+C:/Users/Ivan/programming/labs/lab1.1/main.cpp
+iostream
+-
+Sequences.h
+C:/Users/Ivan/programming/labs/lab1.1/Sequences.h
+functional
+-
+
