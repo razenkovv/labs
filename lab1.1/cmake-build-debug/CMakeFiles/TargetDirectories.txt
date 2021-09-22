@@ -1,3 +1,0 @@
-C:/Users/Ivan/programming/labs/lab1.1/cmake-build-debug/CMakeFiles/lab1_1.dir
-C:/Users/Ivan/programming/labs/lab1.1/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Ivan/programming/labs/lab1.1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
