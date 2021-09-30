@@ -1,3 +1,0 @@
-C:/Users/Ivan/programming/labs/lab1_3sem/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_a0acf.dir
-C:/Users/Ivan/programming/labs/lab1_3sem/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeFiles/edit_cache.dir
-C:/Users/Ivan/programming/labs/lab1_3sem/cmake-build-debug/CMakeFiles/CMakeTmp/CMakeFiles/rebuild_cache.dir
