@@ -48,6 +48,7 @@ public:
     std::unique_ptr<List<T>> get_sublist(int start, int end); //возврат части списка (от start до end)
 
     void push_back(const T &new_value); //добавление элемента в конец
+    void insert_after(typename List<T>::Node* tmp, typename List<T>::Node* end);
 
     void push_front(const T &new_value); //добавление элемента в начало
 
@@ -259,6 +260,22 @@ void List<T>::clear() {
     m_head = nullptr;
     m_tail = nullptr;
     m_size = 0;
+}
+
+template <typename T>
+void List<T>::insert_after(typename List<T>::Node* tmp, typename List<T>::Node* end) {
+    if (tmp == end)
+        throw std::runtime_error("\nInsert_after Message : tmp == end\n");
+    if (tmp == m_head)
+        m_head = tmp->next;
+    else
+        tmp->prev->next = tmp->next;
+    tmp->next->prev = tmp->prev;
+    tmp->prev = end;
+    tmp->next = end->next;
+    end->next = tmp;
+    if (tmp->next == nullptr)
+        m_tail = tmp;
 }
 
 template<typename T>

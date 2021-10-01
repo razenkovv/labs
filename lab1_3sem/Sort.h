@@ -12,10 +12,16 @@ template <typename T>
 void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
 
 template <typename T>
-void quick_sort_list(typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&));
+void merge_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
 
 template <typename T>
-void check_sorted(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
+void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&));
+
+template <typename T>
+void check_sorted_array(ArraySequence<T>& seq, int (*cmp) (const T&, const T&));
+
+template <typename T>
+void check_sorted_list(ListSequence<T>& seq, int (*cmp) (const T&, const T&));
 
 
 template<typename T>
@@ -64,6 +70,7 @@ void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const
             break;
         }
     } while (i <= j);
+
     int len = j - start + 1;
     int new_start = start + len;
     quick_sort_array(seq, start, len, cmp);
@@ -71,21 +78,67 @@ void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const
 }
 
 template <typename T>
-void quick_sort_list(typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&)) {
+void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&)) {
+    if (start == end)
+        return;
+    typename List<T>::Node* b = start;
+    typename List<T>::Node* pivot = end;
+    while (b != pivot) {
+        if (cmp(b->value, pivot->value) > 0) {
+            if (b == start)
+                start = b->next;
+            typename List<T>::Node *tmp = b;
+            b = b->next;
+            seq.insert_after(tmp, end);
+            end = tmp;
+        } else {
+            b = b->next;
+        }
+    }
 
+    if (b->prev)
+        quick_sort_list(seq, start, b->prev, cmp);
+    if (b->next)
+        quick_sort_list(seq, b, end, cmp);
 }
 
 template <typename T>
-void check_sorted(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
+void merge_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
+    if (n <= 1)
+        return;
+    merge_sort_array(seq, start, n/2, cmp);
+    merge_sort_array(seq, start + n/2, n - n/2, cmp);
+    merge_arrays();
+}
+
+template <typename T>
+void check_sorted_array(ArraySequence<T>& seq, int (*cmp) (const T&, const T&)) {
     bool check = true;
-    for (int i = 0; i < (n-1); ++i) {
+    for (int i = 0; i < (seq.size() - 1); ++i) {
         if (cmp(seq.get(i), seq.get(i+1)) > 0) {
             check = false;
             break;
         }
     }
     if (!check)
-        std::cout << "Check_sorted: ERROR.\n";
+        std::cout << "Check_sorted_array: ERROR.\n";
     else
-        std::cout << "Check_sorted: OK.\n";
+        std::cout << "Check_sorted_array: OK.\n";
+}
+
+template <typename T>
+void check_sorted_list(ListSequence<T>& seq, int (*cmp) (const T&, const T&)) {
+    bool check = true;
+    typename List<T>::Node* b = seq.get_first_node();
+    while (b->next) {
+        if (cmp(b->value, b->next->value) > 0) {
+            check = false;
+            break;
+        }
+        b = b->next;
+    }
+    if (!check)
+        std::cout << "Check_sorted_list: ERROR.\n";
+    else
+        std::cout << "Check_sorted_list: OK.\n";
 }

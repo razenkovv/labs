@@ -135,6 +135,7 @@ public:
     void push_front(const T &value){ list_data.push_front(value); }
 
     void push_back(const T &value){ list_data.push_back(value); }
+    void insert_after(typename List<T>::Node* tmp, typename List<T>::Node* end){ list_data.insert_after(tmp, end); }
 
     void print() { list_data.print(); }
 };
