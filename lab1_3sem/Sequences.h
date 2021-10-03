@@ -36,7 +36,7 @@ private:
 public:
     Array_Iterator<T> begin() { return array_data.begin(); }
     Array_Iterator<T> end() { return array_data.end(); }
-    Array_Iterator<T> last() { return array_data.last() }
+    Array_Iterator<T> last() { return array_data.last(); }
 
     ArraySequence() : array_data() {} //конструктор по умолчанию
 

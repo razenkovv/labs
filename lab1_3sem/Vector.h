@@ -17,9 +17,9 @@ private:
     unsigned int m_cap;
 
 public:
-    Array_Iterator<T> begin() { return Array_Iterator<T>(this, m_array); }
-    Array_Iterator<T> end() { return Array_Iterator<T>(this, m_array + this->size()); }
-    Array_Iterator<T> last() { return Array_Iterator<T>(this, m_array + (this->size() - 1)); }
+    Array_Iterator<T> begin() { return Array_Iterator<T>(this, m_array, 0); }
+    Array_Iterator<T> end() { return Array_Iterator<T>(this, m_array + this->size(), this->size()); }
+    Array_Iterator<T> last() { return Array_Iterator<T>(this, m_array + (this->size() - 1), this->size() - 1); }
 
     Vector() : m_size(0), m_cap(0) { m_array = nullptr; } //создание вектора по умолчанию
 
@@ -75,38 +75,55 @@ class Array_Iterator : public Iterator<T> {
 protected:
     Vector<T>* m_array;
     T* m_ptr;
+    int m_index;
 
 public:
-    Array_Iterator() : m_array(nullptr), m_ptr(nullptr) {};
+    Array_Iterator() : m_array(nullptr), m_ptr(nullptr), m_index(0) {};
 
-    Array_Iterator(Vector<T>* array, T* ptr) : m_array(array), m_ptr(ptr) {};
+    Array_Iterator(Vector<T>* array, T* ptr, int index) : m_array(array), m_ptr(ptr), m_index(index) {};
 
-    T& operator*() { return *m_ptr; }
+    T& operator*() override {
+        if (*this == m_array->end())
+            throw std::runtime_error("\n(Array_Iterator) operator *: index out of range\n");
+        return *m_ptr;
+    }
 
-    Array_Iterator& operator++() {
-        if (*this == m_array->last())
+    Array_Iterator& operator++() override {
+        if (*this == m_array->end())
             throw std::runtime_error("\n(Array_Iterator) operator ++: index out of range\n");
         ++m_ptr;
+        ++m_index;
         return *this;
     }
 
-    Array_Iterator& operator--() {
+    Array_Iterator& operator--() override{
         if (*this == m_array->begin())
             throw std::runtime_error("\n(Array_Iterator) operator --: index out of range\n");
         --m_ptr;
+        --m_index;
         return *this;
     }
 
-    bool operator== (Array_Iterator &it) {
-        return m_ptr == it.m_ptr;
+    std::unique_ptr<Iterator<T>> operator+(int x) override{
+        if (((m_index + x) < 0) || ((m_index + x) > m_array->size()))
+            throw std::runtime_error("\n(Array_Iterator) operator +: index out of range\n");
+        std::unique_ptr<Array_Iterator<T>> res(new Array_Iterator<T>(m_array, m_ptr + x, m_index + x));
+        return res;
     }
+
+    std::unique_ptr<Iterator<T>> copy() override{
+        std::unique_ptr<Array_Iterator<T>> res(new Array_Iterator<T>(m_array, m_ptr, m_index));
+        return res;
+    }
+
+    int get_index() const override{ return m_index; }
 
     friend bool operator== (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr == it2.m_ptr; }
     friend bool operator!= (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr != it2.m_ptr; }
+    friend bool operator< (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_index < it2.m_index; }
+    friend bool operator<= (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_index <= it2.m_index; }
 
-    int operator- (Array_Iterator &it) {
-        return m_ptr - it.m_ptr;
-    }
+    friend int operator- (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr - it2.m_ptr; }
 };
 
 

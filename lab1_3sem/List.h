@@ -95,13 +95,13 @@ public:
 
     List_Iterator(List<T>* list, typename List<T>::Node* node, int index) : m_list(list), m_node(node), m_index(index) {};
 
-    T& operator*() {
+    T& operator*() override {
         if (m_node == nullptr)
             throw std::runtime_error("\n(List_Iterator) operator *: index out of range\n");
         return m_node->value;
     }
 
-    List_Iterator& operator++() {
+    List_Iterator& operator++() override {
         if (m_node == nullptr)
             throw std::runtime_error("\n(List_Iterator) operator ++: index out of range\n");
         m_node = m_node->next;
@@ -109,7 +109,7 @@ public:
         return *this;
     }
 
-    List_Iterator& operator--() {
+    List_Iterator& operator--() override {
         if (m_node == nullptr)
             throw std::runtime_error("\n(List_Iterator) operator --: index out of range\n");
         m_node = m_node->prev;
@@ -117,12 +117,36 @@ public:
         return *this;
     }
 
+    std::unique_ptr<Iterator<T>> operator+(int x) override{
+        if (((m_index + x) < 0) || ((m_index + x) > m_list->size()))
+            throw std::runtime_error("\n(List_Iterator) operator +: index out of range\n");
+        std::unique_ptr<List_Iterator<T>> res(new List_Iterator<T>(m_list, m_node, m_index));
+        if (x > 0) {
+            for (int i = 0; i < x; ++i) {
+                res->m_node = res->m_node->next;
+            }
+        } else {
+            for (int i = 0; i < -1*x; ++i) {
+               res->m_node = res->m_node->prev;
+            }
+        }
+        res->m_index += x;
+        return res;
+    }
+
+    std::unique_ptr<Iterator<T>> copy() override{
+        std::unique_ptr<List_Iterator<T>> res(new List_Iterator<T>(m_list, m_node, m_index));
+        return res;
+    }
+
+    int get_index() const override{ return m_index; }
+
     friend bool operator== (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_node == it2.m_node; }
     friend bool operator!= (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_node != it2.m_node; }
+    friend bool operator< (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index < it2.m_index; }
+    friend bool operator<= (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index <= it2.m_index; }
 
-    int operator- (List_Iterator &it) {
-        return m_index - it.m_index;
-    }
+    friend int operator- (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index - it2.m_index; }
 };
 
 
