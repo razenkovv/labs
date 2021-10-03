@@ -3,14 +3,24 @@
 #include <cstdint>
 #include <memory>
 
+#include "Iterator.h"
+
+template <typename T>
+class Array_Iterator;
+
 template <typename T>
 class Vector {
+    friend class Array_Iterator<T>;
 private:
     T *m_array;
     unsigned int m_size;
     unsigned int m_cap;
 
 public:
+    Array_Iterator<T> begin() { return Array_Iterator<T>(this, m_array); }
+    Array_Iterator<T> end() { return Array_Iterator<T>(this, m_array + this->size()); }
+    Array_Iterator<T> last() { return Array_Iterator<T>(this, m_array + (this->size() - 1)); }
+
     Vector() : m_size(0), m_cap(0) { m_array = nullptr; } //создание вектора по умолчанию
 
     explicit Vector(unsigned int size); //создание вектора длины size
@@ -55,6 +65,51 @@ public:
 
     T& operator[] (int i); //перегрузка оператора []
 };
+
+
+
+template <typename T>
+class Array_Iterator : public Iterator<T> {
+    friend class Vector<T>;
+
+protected:
+    Vector<T>* m_array;
+    T* m_ptr;
+
+public:
+    Array_Iterator() : m_array(nullptr), m_ptr(nullptr) {};
+
+    Array_Iterator(Vector<T>* array, T* ptr) : m_array(array), m_ptr(ptr) {};
+
+    T& operator*() { return *m_ptr; }
+
+    Array_Iterator& operator++() {
+        if (*this == m_array->last())
+            throw std::runtime_error("\n(Array_Iterator) operator ++: index out of range\n");
+        ++m_ptr;
+        return *this;
+    }
+
+    Array_Iterator& operator--() {
+        if (*this == m_array->begin())
+            throw std::runtime_error("\n(Array_Iterator) operator --: index out of range\n");
+        --m_ptr;
+        return *this;
+    }
+
+    bool operator== (Array_Iterator &it) {
+        return m_ptr == it.m_ptr;
+    }
+
+    friend bool operator== (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr == it2.m_ptr; }
+    friend bool operator!= (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr != it2.m_ptr; }
+
+    int operator- (Array_Iterator &it) {
+        return m_ptr - it.m_ptr;
+    }
+};
+
+
 
 template <typename T>
 Vector<T>::~Vector() {

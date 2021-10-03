@@ -33,28 +33,28 @@ int cmp(const int& x,const int& y) {
 }
 
 int main() {
-    unsigned int N{10000000};
-    std::default_random_engine gen(13);
-    std::uniform_int_distribution<int> distr(-100000, 100000);
-
-    ArraySequence<int> a{N,0};
-    for (int i = 0; i < N; ++i) {
-        a.set(i, distr(gen));
-    }
+//    unsigned int N{10000000};
+//    std::default_random_engine gen(13);
+//    std::uniform_int_distribution<int> distr(-100000, 100000);
+//
+//    ArraySequence<int> a{N,0};
+//    for (int i = 0; i < N; ++i) {
+//        a.set(i, distr(gen));
+//    }
 
 //    ListSequence<int> b;
 //    for (int i = 0; i < N; ++i) {
 //        b.push_back(distr(gen));
 //    }
 
-    Timer t;
-    try {
-        quick_sort_array(a, 0, a.size(), cmp);
-    } catch (const std::runtime_error &msg) {
-        std::cerr << msg.what();
-    }
-    std::cout << "ARRAY Time taken: " << t.elapsed() << " sec" << '\n';
-    check_sorted_array(a, cmp);
+//    Timer t;
+//    try {
+//        quick_sort_array(a, 0, a.size(), cmp);
+//    } catch (const std::runtime_error &msg) {
+//        std::cerr << msg.what();
+//    }
+//    std::cout << "ARRAY Time taken: " << t.elapsed() << " sec" << '\n';
+//    check_sorted_array(a, cmp);
 
 //    Timer t2;
 //    try {
@@ -64,4 +64,21 @@ int main() {
 //    }
 //    std::cout << "LIST Time taken: " << t2.elapsed() << " sec" << '\n';
 //    check_sorted_list(b, cmp);
+//    ArraySequence<int> a{5,0};
+//    a.set(0,66);
+//    a.set(1,77);
+//    a.set(4,55);
+//    try {
+//        auto it = a.begin();
+//        auto it2 = a.last();
+//        ++it;
+//        std::cout << *it << " " << *it2;
+//    } catch (const std::runtime_error &msg) {
+//       std::cerr << msg.what();
+//    }
+    ArraySequence<int> a{5,5};
+    a.set(4,34);
+    auto it = a.begin();
+    auto it2 = a.end();
+    std::cout << it2 - it <<"\n";
 }

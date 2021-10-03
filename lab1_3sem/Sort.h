@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sequences.h"
+#include "Iterator.h"
 
 template <typename T>
 void swap(T& x, T& y);
@@ -78,6 +79,38 @@ void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const
 }
 
 template <typename T>
+void quick_sort(Iterator<T>& begin, Iterator<T>& end, int (*cmp) (const T&, const T&)) {
+    if ((end - begin) <= 1)
+        return;
+    int i{start}, j{start + n - 1};
+    int pivot{start + n / 2};
+    do {
+        while (cmp(seq.get(i), seq.get(pivot)) < 0)
+            ++i;
+        while (cmp(seq.get(j), seq.get(pivot)) > 0)
+            --j;
+        if (i < j) {
+            swap(seq.get(i), seq.get(j));
+            if (pivot == i)
+                pivot = j;
+            else if (pivot == j)
+                pivot = i;
+            ++i;
+            --j;
+        } else if (i == j) {
+            ++i;
+            --j;
+            break;
+        }
+    } while (i <= j);
+
+    int len = j - start + 1;
+    int new_start = start + len;
+    quick_sort_array(seq, start, len, cmp);
+    quick_sort_array(seq, new_start, n - len, cmp);
+}
+
+template <typename T>
 void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&)) {
     if (start == end)
         return;
@@ -104,11 +137,11 @@ void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typena
 
 template <typename T>
 void merge_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
-    if (n <= 1)
-        return;
-    merge_sort_array(seq, start, n/2, cmp);
-    merge_sort_array(seq, start + n/2, n - n/2, cmp);
-    merge_arrays();
+//    if (n <= 1)
+//        return;
+//    merge_sort_array(seq, start, n/2, cmp);
+//    merge_sort_array(seq, start + n/2, n - n/2, cmp);
+//    merge_arrays();
 }
 
 template <typename T>

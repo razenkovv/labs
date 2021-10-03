@@ -4,8 +4,12 @@
 #include <memory>
 
 template <typename T>
+class List_Iterator;
+
+template <typename T>
 class List {
-public:
+    friend class List_Iterator<T>;
+protected:
     class Node {
     public:
         Node* next;
@@ -22,6 +26,16 @@ public:
     int m_size{};
     Node* m_head;
     Node* m_tail;
+
+public:
+    List_Iterator<T> begin() { return List_Iterator<T>(this, this->m_head, 0); }
+    List_Iterator<T> end() {
+        if (m_tail == nullptr)
+            return List_Iterator<T>(this, this->m_tail, this->size());
+        else
+            return List_Iterator<T>(this, this->m_tail->next, this->size());
+    }
+    List_Iterator<T> last() { return List_Iterator<T>(this, this->m_tail, this->size() - 1); }
 
     List() : m_size(0) { m_head = nullptr; m_tail = nullptr; } //создание пустого списка
 
@@ -64,6 +78,54 @@ public:
 
     T& operator[] (int i);
 };
+
+
+
+template<typename T>
+class List_Iterator : public Iterator<T> {
+    friend class List<T>;
+
+protected:
+    typename List<T>::Node* m_node;
+    List<T>* m_list;
+    int m_index;
+
+public:
+    List_Iterator() : m_list(nullptr), m_node(nullptr), m_index(0) {};
+
+    List_Iterator(List<T>* list, typename List<T>::Node* node, int index) : m_list(list), m_node(node), m_index(index) {};
+
+    T& operator*() {
+        if (m_node == nullptr)
+            throw std::runtime_error("\n(List_Iterator) operator *: index out of range\n");
+        return m_node->value;
+    }
+
+    List_Iterator& operator++() {
+        if (m_node == nullptr)
+            throw std::runtime_error("\n(List_Iterator) operator ++: index out of range\n");
+        m_node = m_node->next;
+        ++m_index;
+        return *this;
+    }
+
+    List_Iterator& operator--() {
+        if (m_node == nullptr)
+            throw std::runtime_error("\n(List_Iterator) operator --: index out of range\n");
+        m_node = m_node->prev;
+        --m_index;
+        return *this;
+    }
+
+    friend bool operator== (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_node == it2.m_node; }
+    friend bool operator!= (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_node != it2.m_node; }
+
+    int operator- (List_Iterator &it) {
+        return m_index - it.m_index;
+    }
+};
+
+
 
 template<typename T>
 List<T>::List(int size, const T &value) : List() {

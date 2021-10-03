@@ -7,6 +7,7 @@
 template <typename T>
 class Sequence {
 public:
+
     virtual void concat(Sequence<T> &other_seq) = 0;
     virtual std::unique_ptr<Sequence<T>> get_subsequence(int start, int end) = 0;
 
@@ -25,11 +26,18 @@ public:
     virtual ~Sequence() = default;
 };
 
+
+
 template<typename T>
 class ArraySequence : public Sequence<T> {
 private:
     Vector<T> array_data;
+
 public:
+    Array_Iterator<T> begin() { return array_data.begin(); }
+    Array_Iterator<T> end() { return array_data.end(); }
+    Array_Iterator<T> last() { return array_data.last() }
+
     ArraySequence() : array_data() {} //конструктор по умолчанию
 
     explicit ArraySequence(unsigned int size, const T &value=T()) : array_data(size, value) {} //создание sequence длины size и заполнение её значением value
@@ -102,6 +110,10 @@ class ListSequence : public Sequence<T> {
 private:
     List<T> list_data;
 public:
+    List_Iterator<T> begin() { return list_data.begin(); }
+    List_Iterator<T> end() { return list_data.end(); }
+    List_Iterator<T> last() { return list_data.last(); }
+
     ListSequence() : list_data() {} //конструктор по умолчанию
 
     explicit ListSequence(unsigned int size, const T &value=T()) : list_data(size, value) {} //создание sequence длины size и заполнение её значением value
@@ -115,8 +127,6 @@ public:
     ~ListSequence() = default;
 
     T& get_first() { return list_data.front(); }
-    typename List<T>::Node* get_first_node() { return list_data.get_first_node(); }
-    typename List<T>::Node* get_last_node() { return list_data.get_last_node(); }
 
     T& get_last() { return list_data.back(); }
 
@@ -135,7 +145,6 @@ public:
     void push_front(const T &value){ list_data.push_front(value); }
 
     void push_back(const T &value){ list_data.push_back(value); }
-    void insert_after(typename List<T>::Node* tmp, typename List<T>::Node* end){ list_data.insert_after(tmp, end); }
 
     void print() { list_data.print(); }
 };
