@@ -1,4 +1,5 @@
 #include <iostream>
+#include<fstream>
 #include <random>
 #include <array>
 #include <chrono>
@@ -33,30 +34,44 @@ int cmp(const int& x,const int& y) {
 }
 
 int main() {
-    try {
-        unsigned int N{10000};
-        std::default_random_engine gen(13);
-        std::uniform_int_distribution<int> distr(-10, 10);
-
-        ArraySequence<int> a{N,0};
-        for (int i = 0; i < N; ++i) {
-            a.set(i, distr(gen));
-        }
-        //a.print();
-        auto it1 = a.begin();
-        auto it2 = a.last();
-        Timer t;
-    try {
-        quick_sort(it1, it2, cmp);
-    } catch (const std::runtime_error &msg) {
-        std::cerr << msg.what();
+//    std::string Path2 = R"(C:\Users\Ivan\programming\labs\lab1_3sem\Mergesort.txt)";
+//    std::ofstream fout(Path2);
+//    for (int i = 10000; i <= 100000; i+=10000) {
+//        fout <<  i << ", ";
+//    }
+//    fout << "\n";
+//    int k = 1;
+//    for (unsigned int n = 10000; n <= 100000; n+=10000) {
+//        double T(0);
+//        for (int i = 0; i < k; ++i) {
+//            std::default_random_engine gen(n + i);
+//            std::uniform_int_distribution<int> distr(-100000, 100000);
+//            ArraySequence<int> a{n,0};
+//            for (int & it : a) {
+//                it = distr(gen);
+//            }
+//            auto it1 = a.begin();
+//            auto it2 = a.last();
+//            Timer t;
+//            merge_sort(it1, it2, cmp);
+//            T += t.elapsed();
+//        }
+//        T = T/k;
+//        fout << T << ", ";
+//    }
+    unsigned int n = 20;
+    std::default_random_engine gen(100);
+    std::uniform_int_distribution<int> distr(0, 10);
+    ListSequence<int> a{n,0};
+    for (int & it : a) {
+        it = distr(gen);
     }
-    std::cout << "Time taken: " << t.elapsed() << " sec" << '\n';
+    auto it1 = a.begin();
+    auto it2 = a.last();
+    a.print();
+    merge_sort(it1, it2, cmp);
+    a.print();
     auto it11 = a.begin();
     auto it22 = a.last();
     check_sorted(it11, it22, cmp);
-    //a.print();
-    } catch (const std::runtime_error &msg) {
-        std::cerr << msg.what();
-    }
 }

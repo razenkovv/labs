@@ -10,19 +10,28 @@ template <typename T>
 void insert_sort(Sequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
 
 template <typename T>
-void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
+void quick_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
+
+//template <typename T>
+//void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
 
 template <typename T>
-void merge_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
+void merge_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
 
 template <typename T>
-void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&));
+void merge(Iterator<T>& b, Iterator<T>& e, Iterator<T>& middle, int (*cmp) (const T&, const T&));
+
+//template <typename T>
+//void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&));
+
+//template <typename T>
+//void check_sorted_array(ArraySequence<T>& seq, int (*cmp) (const T&, const T&));
+//
+//template <typename T>
+//void check_sorted_list(ListSequence<T>& seq, int (*cmp) (const T&, const T&));
 
 template <typename T>
-void check_sorted_array(ArraySequence<T>& seq, int (*cmp) (const T&, const T&));
-
-template <typename T>
-void check_sorted_list(ListSequence<T>& seq, int (*cmp) (const T&, const T&));
+bool check_sorted(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
 
 
 template<typename T>
@@ -83,8 +92,49 @@ void quick_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&))
 }
 
 template <typename T>
-void merge_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
+void merge_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&)) {
+    if (b >= e) {
+        return;
+    }
+    auto middle = b + (e - b)/2;
+    merge_sort(b, *middle, cmp);
+    merge_sort(*(*middle + 1), e, cmp);
+    merge(b, e, *middle, cmp);
+}
 
+template <typename T>
+void merge(Iterator<T>& b, Iterator<T>& e, Iterator<T>& middle, int (*cmp) (const T&, const T&)) {
+    if ((b >= e) || (middle < b) || (middle > e)) return;
+    if (e == *(b + 1)) {
+        if (cmp(*b, *e) > 0) swap(*b, *e);
+        return;
+    }
+    std::unique_ptr<ArraySequence<T>> tmp(new ArraySequence<T>{static_cast<unsigned int> (e - b + 1)});
+    auto run = b.copy();
+    for (int i = 0; i <= (e - b); ++i) {
+        new(&(tmp->get(i))) T(**run);
+        ++*run;
+    }
+    int j(0), k(middle - b + 1);
+    auto begin = b.copy();
+    while (*begin <= e) {
+        if (j > (middle - b)) {
+            **begin = tmp->get(k);
+            ++k;
+        } else if (k > (e - b)) {
+            **begin = tmp->get(j);
+            ++j;
+        } else {
+            if (cmp(tmp->get(j), tmp->get(k)) < 0) {
+                **begin = tmp->get(j);
+                ++j;
+            } else {
+                **begin = tmp->get(k);
+                ++k;
+            }
+        }
+        ++*begin;
+    }
 }
 
 template <typename T>
@@ -105,59 +155,59 @@ bool check_sorted(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&
     return check;
 }
 
-template <typename T>
-void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&)) {
-    if (start == end)
-        return;
-    typename List<T>::Node* b = start;
-    typename List<T>::Node* pivot = end;
-    while (b != pivot) {
-        if (cmp(b->value, pivot->value) > 0) {
-            if (b == start)
-                start = b->next;
-            typename List<T>::Node *tmp = b;
-            b = b->next;
-            seq.insert_after(tmp, end);
-            end = tmp;
-        } else {
-            b = b->next;
-        }
-    }
-
-    if (b->prev)
-        quick_sort_list(seq, start, b->prev, cmp);
-    if (b->next)
-        quick_sort_list(seq, b, end, cmp);
-}
-
-template <typename T>
-void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
-    if (n <= 1)
-        return;
-    int i{start}, j{start + n - 1};
-    int pivot{start + n / 2};
-    do {
-        while (cmp(seq.get(i), seq.get(pivot)) < 0)
-            ++i;
-        while (cmp(seq.get(j), seq.get(pivot)) > 0)
-            --j;
-        if (i < j) {
-            swap(seq.get(i), seq.get(j));
-            if (pivot == i)
-                pivot = j;
-            else if (pivot == j)
-                pivot = i;
-            ++i;
-            --j;
-        } else if (i == j) {
-            ++i;
-            --j;
-            break;
-        }
-    } while (i <= j);
-
-    int len = j - start + 1;
-    int new_start = start + len;
-    quick_sort_array(seq, start, len, cmp);
-    quick_sort_array(seq, new_start, n - len, cmp);
-}
+//template <typename T>
+//void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&)) {
+//    if (start == end)
+//        return;
+//    typename List<T>::Node* b = start;
+//    typename List<T>::Node* pivot = end;
+//    while (b != pivot) {
+//        if (cmp(b->value, pivot->value) > 0) {
+//            if (b == start)
+//                start = b->next;
+//            typename List<T>::Node *tmp = b;
+//            b = b->next;
+//            seq.insert_after(tmp, end);
+//            end = tmp;
+//        } else {
+//            b = b->next;
+//        }
+//    }
+//
+//    if (b->prev)
+//        quick_sort_list(seq, start, b->prev, cmp);
+//    if (b->next)
+//        quick_sort_list(seq, b, end, cmp);
+//}
+//
+//template <typename T>
+//void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
+//    if (n <= 1)
+//        return;
+//    int i{start}, j{start + n - 1};
+//    int pivot{start + n / 2};
+//    do {
+//        while (cmp(seq.get(i), seq.get(pivot)) < 0)
+//            ++i;
+//        while (cmp(seq.get(j), seq.get(pivot)) > 0)
+//            --j;
+//        if (i < j) {
+//            swap(seq.get(i), seq.get(j));
+//            if (pivot == i)
+//                pivot = j;
+//            else if (pivot == j)
+//                pivot = i;
+//            ++i;
+//            --j;
+//        } else if (i == j) {
+//            ++i;
+//            --j;
+//            break;
+//        }
+//    } while (i <= j);
+//
+//    int len = j - start + 1;
+//    int new_start = start + len;
+//    quick_sort_array(seq, start, len, cmp);
+//    quick_sort_array(seq, new_start, n - len, cmp);
+//}

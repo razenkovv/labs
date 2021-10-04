@@ -144,7 +144,9 @@ public:
     friend bool operator== (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_node == it2.m_node; }
     friend bool operator!= (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_node != it2.m_node; }
     friend bool operator< (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index < it2.m_index; }
+    friend bool operator> (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index > it2.m_index; }
     friend bool operator<= (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index <= it2.m_index; }
+    friend bool operator>= (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index >= it2.m_index; }
 
     friend int operator- (const List_Iterator &it1, const List_Iterator &it2) { return it1.m_index - it2.m_index; }
 };

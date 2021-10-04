@@ -121,7 +121,9 @@ public:
     friend bool operator== (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr == it2.m_ptr; }
     friend bool operator!= (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr != it2.m_ptr; }
     friend bool operator< (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_index < it2.m_index; }
+    friend bool operator> (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_index > it2.m_index; }
     friend bool operator<= (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_index <= it2.m_index; }
+    friend bool operator>= (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_index >= it2.m_index; }
 
     friend int operator- (const Array_Iterator &it1, const Array_Iterator &it2) { return it1.m_ptr - it2.m_ptr; }
 };
