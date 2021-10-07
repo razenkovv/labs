@@ -105,9 +105,16 @@ public:
     }
 
     std::unique_ptr<Iterator<T>> operator+(int x) override{
-        if (((m_index + x) < 0) || ((m_index + x) > m_array->size()))
+        if (((m_index + x) < 0) || ((m_index + x) >= m_array->size()))
             throw std::runtime_error("\n(Array_Iterator) operator +: index out of range\n");
         std::unique_ptr<Array_Iterator<T>> res(new Array_Iterator<T>(m_array, m_ptr + x, m_index + x));
+        return res;
+    }
+
+    std::unique_ptr<Iterator<T>> operator-(int x) override{
+        if (((m_index - x) < 0) || ((m_index - x) > m_array->size()))
+            throw std::runtime_error("\n(Array_Iterator) operator -: index out of range\n");
+        std::unique_ptr<Array_Iterator<T>> res(new Array_Iterator<T>(m_array, m_ptr - x, m_index - x));
         return res;
     }
 

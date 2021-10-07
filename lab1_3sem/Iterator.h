@@ -7,6 +7,7 @@ public:
     virtual Iterator<T>& operator++() = 0;
     virtual Iterator<T>& operator--() = 0;
     virtual std::unique_ptr<Iterator<T>> operator+(int x) = 0;
+    virtual std::unique_ptr<Iterator<T>> operator-(int x) = 0;
     virtual std::unique_ptr<Iterator<T>> copy() = 0;
     virtual int get_index() const = 0;
 };

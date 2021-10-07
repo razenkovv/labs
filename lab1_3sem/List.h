@@ -50,10 +50,10 @@ public:
     int size() { return m_size; } //возвращает длину списка
 
     T& front(); //получение первого элемента
-    Node* get_first_node(); //получение ноды первого элемента
+
 
     T& back(); //получение последнего элемента
-    Node* get_last_node(); //получение ноды последнего элемента
+
 
     T& get(int index); //получение элемента по индексу i
 
@@ -62,7 +62,6 @@ public:
     std::unique_ptr<List<T>> get_sublist(int start, int end); //возврат части списка (от start до end)
 
     void push_back(const T &new_value); //добавление элемента в конец
-    void insert_after(typename List<T>::Node* tmp, typename List<T>::Node* end);
 
     void push_front(const T &new_value); //добавление элемента в начало
 
@@ -118,7 +117,7 @@ public:
     }
 
     std::unique_ptr<Iterator<T>> operator+(int x) override{
-        if (((m_index + x) < 0) || ((m_index + x) > m_list->size()))
+        if (((m_index + x) < 0) || ((m_index + x) >= m_list->size()))
             throw std::runtime_error("\n(List_Iterator) operator +: index out of range\n");
         std::unique_ptr<List_Iterator<T>> res(new List_Iterator<T>(m_list, m_node, m_index));
         if (x > 0) {
@@ -131,6 +130,23 @@ public:
             }
         }
         res->m_index += x;
+        return res;
+    }
+
+    std::unique_ptr<Iterator<T>> operator-(int x) override{
+        if (((m_index - x) < 0) || ((m_index - x) > m_list->size()))
+            throw std::runtime_error("\n(List_Iterator) operator -: index out of range\n");
+        std::unique_ptr<List_Iterator<T>> res(new List_Iterator<T>(m_list, m_node, m_index));
+        if (x > 0) {
+            for (int i = 0; i < x; ++i) {
+                res->m_node = res->m_node->prev;
+            }
+        } else {
+            for (int i = 0; i < -1*x; ++i) {
+                res->m_node = res->m_node->next;
+            }
+        }
+        res->m_index -= x;
         return res;
     }
 
@@ -198,12 +214,6 @@ T& List<T>::front() {
     return m_head->value;
 }
 
-template <typename T>
-typename List<T>::Node* List<T>::get_first_node() {
-    if (m_size == 0)
-        throw std::runtime_error("\nGet_first_node Message : List is empty\n");
-    return m_head;
-}
 
 template <typename T>
 T& List<T>::back() {
@@ -212,12 +222,6 @@ T& List<T>::back() {
     return m_tail->value;
 }
 
-template <typename T>
-typename List<T>::Node* List<T>::get_last_node() {
-    if (m_size == 0)
-        throw std::runtime_error("\nGet_last_node Message : List is empty\n");
-    return m_tail;
-}
 
 template <typename T>
 T& List<T>::get(int index) {
@@ -348,22 +352,6 @@ void List<T>::clear() {
     m_head = nullptr;
     m_tail = nullptr;
     m_size = 0;
-}
-
-template <typename T>
-void List<T>::insert_after(typename List<T>::Node* tmp, typename List<T>::Node* end) {
-    if (tmp == end)
-        throw std::runtime_error("\nInsert_after Message : tmp == end\n");
-    if (tmp == m_head)
-        m_head = tmp->next;
-    else
-        tmp->prev->next = tmp->next;
-    tmp->next->prev = tmp->prev;
-    tmp->prev = end;
-    tmp->next = end->next;
-    end->next = tmp;
-    if (tmp->next == nullptr)
-        m_tail = tmp;
 }
 
 template<typename T>

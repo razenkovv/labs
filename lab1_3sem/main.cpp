@@ -33,45 +33,206 @@ int cmp(const int& x,const int& y) {
     else return -1;
 }
 
-int main() {
-//    std::string Path2 = R"(C:\Users\Ivan\programming\labs\lab1_3sem\Mergesort.txt)";
-//    std::ofstream fout(Path2);
-//    for (int i = 10000; i <= 100000; i+=10000) {
-//        fout <<  i << ", ";
-//    }
-//    fout << "\n";
-//    int k = 1;
-//    for (unsigned int n = 10000; n <= 100000; n+=10000) {
-//        double T(0);
-//        for (int i = 0; i < k; ++i) {
-//            std::default_random_engine gen(n + i);
-//            std::uniform_int_distribution<int> distr(-100000, 100000);
-//            ArraySequence<int> a{n,0};
-//            for (int & it : a) {
-//                it = distr(gen);
-//            }
-//            auto it1 = a.begin();
-//            auto it2 = a.last();
-//            Timer t;
-//            merge_sort(it1, it2, cmp);
-//            T += t.elapsed();
-//        }
-//        T = T/k;
-//        fout << T << ", ";
-//    }
-    unsigned int n = 20;
-    std::default_random_engine gen(100);
-    std::uniform_int_distribution<int> distr(0, 10);
-    ListSequence<int> a{n,0};
-    for (int & it : a) {
-        it = distr(gen);
+int cmp_r(const int& x,const int& y) {
+    if (x > y) return -1;
+    else if (x == y) return 0;
+    else return 1;
+}
+
+void test_time() {
+    std::cout << "Choose sort:\n1 - merge_sort\n2 - heap_sort\n3 - quick_sort\n4 - insert_sort\n";
+    int a;
+    std::cin >> a;
+    std::cout << "Enter bounds of number of elements in sequences:\n";
+    int left, right;
+    std::cin >> left >> right;
+    std::cout << "Enter step:\n";
+    int step;
+    std::cin >> step;
+    std::cout << "Enter number of iterations:\n";
+    int k;
+    std::cin >> k;
+
+    switch (a) {
+        case 1: {
+            std::string Path_merge = R"(C:\Users\Ivan\programming\labs\lab1_3sem\ArrayMergeSort_10^5-10^6.txt)";
+            std::ofstream fout_merge(Path_merge);
+            for (int i = left; i <= right; i += step) {
+                fout_merge << i << ", ";
+            }
+            fout_merge << "\n";
+            for (unsigned int n = left; n <= right; n += step) {
+                if (n % 100 == 0)
+                    std::cout << n << "\n";
+                double T_merge(0);
+                for (int i = 0; i < k; ++i) {
+                    std::default_random_engine gen(n + i);
+                    std::uniform_int_distribution<int> distr(-1000000, 1000000);
+                    ArraySequence<int> seq{n, 0};
+                    for (int &it: seq) {
+                        it = distr(gen);
+                    }
+                    auto it1 = seq.begin();
+                    auto it2 = seq.last();
+                    Timer t1;
+                    merge_sort(it1, it2, cmp);
+                    T_merge += t1.elapsed();
+                }
+                T_merge = T_merge / k;
+                fout_merge << T_merge << ", ";
+            }
+            break;
+        }
+
+        case 2: {
+            std::string Path_heap = R"(C:\Users\Ivan\programming\labs\lab1_3sem\ArrayHeapSort_10^5-10^6.txt)";
+            std::ofstream fout_heap(Path_heap);
+            for (int i = left; i <= right; i += step) {
+                fout_heap << i << ", ";
+            }
+            fout_heap << "\n";
+            for (unsigned int n = left; n <= right; n += step) {
+                if (n % 100 == 0)
+                    std::cout << n << "\n";
+                double T_heap(0);
+                for (int i = 0; i < k; ++i) {
+                    std::default_random_engine gen(n + i);
+                    std::uniform_int_distribution<int> distr(-1000000, 1000000);
+                    ArraySequence<int> seq{n, 0};
+                    for (int &it: seq) {
+                        it = distr(gen);
+                    }
+                    auto it1 = seq.begin();
+                    auto it2 = seq.last();
+                    Timer t2;
+                    heap_sort(it1, it2, cmp);
+                    T_heap += t2.elapsed();
+                }
+                T_heap = T_heap / k;
+                fout_heap << T_heap << ", ";
+            }
+            break;
+        }
+
+        case 3: {
+            std::string Path_quick = R"(C:\Users\Ivan\programming\labs\lab1_3sem\ArrayQuickSort_10^5-10^6.txt)";
+            std::ofstream fout_quick(Path_quick);
+            for (int i = left; i <= right; i += step) {
+                fout_quick << i << ", ";
+            }
+            fout_quick << "\n";
+            for (unsigned int n = left; n <= right; n += step) {
+                if (n % 100 == 0)
+                    std::cout << n << "\n";
+                double T_quick(0);
+                for (int i = 0; i < k; ++i) {
+                    std::default_random_engine gen(n + i);
+                    std::uniform_int_distribution<int> distr(-1000000, 1000000);
+                    ArraySequence<int> seq{n, 0};
+                    for (int &it: seq) {
+                        it = distr(gen);
+                    }
+                    auto it1 = seq.begin();
+                    auto it2 = seq.last();
+                    Timer t3;
+                    quick_sort(it1, it2, cmp);
+                    T_quick += t3.elapsed();
+                }
+                T_quick = T_quick / k;
+                fout_quick << T_quick << ", ";
+            }
+            break;
+        }
+
+        case 4: {
+            std::string Path_insert = R"(C:\Users\Ivan\programming\labs\lab1_3sem\ArrayInsertSort_test.txt)";
+            std::ofstream fout_insert(Path_insert);
+            for (int i = left; i <= right; i += step) {
+                fout_insert << i << ", ";
+            }
+            fout_insert << "\n";
+            for (unsigned int n = left; n <= right; n += step) {
+                if (n % 100 == 0)
+                    std::cout << n << "\n";
+                double T_insert(0);
+                for (int i = 0; i < k; ++i) {
+                    std::default_random_engine gen(n + i);
+                    std::uniform_int_distribution<int> distr(-1000000, 1000000);
+                    ArraySequence<int> seq{n, 0};
+                    for (int &it: seq) {
+                        it = distr(gen);
+                    }
+                    auto it1 = seq.begin();
+                    auto it2 = seq.last();
+                    Timer t4;
+                    insert_sort(it1, it2, cmp);
+                    T_insert += t4.elapsed();
+                }
+                T_insert = T_insert / k;
+                fout_insert << T_insert << ", ";
+            }
+            break;
+        }
+
+        default:
+            break;
     }
-    auto it1 = a.begin();
-    auto it2 = a.last();
-    a.print();
-    merge_sort(it1, it2, cmp);
-    a.print();
-    auto it11 = a.begin();
-    auto it22 = a.last();
-    check_sorted(it11, it22, cmp);
+}
+
+void enter_sequence() {
+    std::cout << "Enter amount of elements and then the elements (integers):\n";
+    unsigned int n;
+    std::cin >> n;
+    ArraySequence<int> seq{n , 0};
+    for (int &it: seq) {
+        int b;
+        std::cin >> b;
+        it = b;
+    }
+    auto seq1 = seq.copy(); auto seq2 = seq.copy(); auto seq3 = seq.copy(); auto seq4 = seq.copy();
+
+    auto it1 = seq1->begin();
+    auto it1_ = seq1->last();
+    merge_sort(it1, it1_, cmp);
+    std::cout << "merge_sort:\n";
+    seq1->print();
+    it1 = seq1->begin();
+    it1_ = seq1->last();
+    check_sorted(it1, it1_, cmp);
+    std::cout << "\n";
+
+    auto it2 = seq2->begin();
+    auto it2_ = seq2->last();
+    quick_sort(it2, it2_, cmp);
+    std::cout << "quick_sort:\n";
+    seq2->print();
+    it2 = seq2->begin();
+    it2_ = seq2->last();
+    check_sorted(it2, it2_, cmp);
+    std::cout << "\n";
+
+    auto it3 = seq3->begin();
+    auto it3_ = seq3->last();
+    heap_sort(it3, it3_, cmp);
+    std::cout << "heap_sort:\n";
+    seq3->print();
+    it3 = seq3->begin();
+    it3_ = seq3->last();
+    check_sorted(it3, it3_, cmp);
+    std::cout << "\n";
+
+    auto it4 = seq4->begin();
+    auto it4_ = seq4->last();
+    insert_sort(it4, it4_, cmp);
+    std::cout << "insert_sort:\n";
+    seq4->print();
+    it4 = seq4->begin();
+    it4_ = seq4->last();
+    check_sorted(it4, it4_, cmp);
+    std::cout << "\n";
+}
+
+int main() {
+    //test_time();
+    enter_sequence();
 }

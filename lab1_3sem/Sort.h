@@ -7,28 +7,20 @@ template <typename T>
 void swap(T& x, T& y);
 
 template <typename T>
-void insert_sort(Sequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
+void insert_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
 
 template <typename T>
 void quick_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
 
-//template <typename T>
-//void quick_sort_array(ArraySequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&));
-
 template <typename T>
 void merge_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
-
 template <typename T>
 void merge(Iterator<T>& b, Iterator<T>& e, Iterator<T>& middle, int (*cmp) (const T&, const T&));
 
-//template <typename T>
-//void quick_sort_list(ListSequence<T>& seq, typename List<T>::Node* start, typename List<T>::Node* end, int (*cmp) (const T&, const T&));
-
-//template <typename T>
-//void check_sorted_array(ArraySequence<T>& seq, int (*cmp) (const T&, const T&));
-//
-//template <typename T>
-//void check_sorted_list(ListSequence<T>& seq, int (*cmp) (const T&, const T&));
+template <typename T>
+void heap_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
+template <typename T>
+void heapify(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
 
 template <typename T>
 bool check_sorted(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&));
@@ -43,15 +35,19 @@ void swap(T& x, T& y)
 }
 
 template <typename T>
-void insert_sort(Sequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
-    if ((start + n > seq.size()) || (start < 0) || (n < 0))
-        throw std::runtime_error("\nInsert_sort Message: index out of range\n");
-    for (int i = start; i < start + n; ++i) {
-        int j = i - 1;
-        while ((j >= 0) && (cmp(seq.get(j), seq.get(j+1))) > 0) {
-            swap(seq.get(j), seq.get(j+1));
-            --j;
+void insert_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&)) {
+    auto begin = b + 1;
+    while (*begin <= e) {
+        auto run = *begin - 1;
+        auto next_run = *run + 1;
+        while ((cmp(**run, **next_run)) > 0) {
+            swap(**run, **next_run);
+            if (*run != b) {
+                --*run;
+                --*next_run;
+            } else break;
         }
+        ++*begin;
     }
 }
 
@@ -138,6 +134,55 @@ void merge(Iterator<T>& b, Iterator<T>& e, Iterator<T>& middle, int (*cmp) (cons
 }
 
 template <typename T>
+void heap_sort(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&)) {
+    if ((e - b) <= 1) {
+        if (cmp(*b, *e) > 0)
+            swap(*b, *e);
+        return;
+    }
+    auto i = b + ((e - b + 1) / 2 - 1);
+    while (true) { //нельзя написать while (*i >= b) т.к. нельзя применить -- к b (к началу (метод begin) sequence)
+        heapify(b, e, *i, cmp);
+        if (*i != b) --*i;
+        else break;
+    }
+    while (true) {
+        swap(*b, *e);
+        if (e != b) {
+            --e;
+            heapify(b, e, b, cmp);
+        } else break;
+    }
+}
+
+template <typename T>
+void heapify(Iterator<T>& b, Iterator<T>& e, Iterator<T>& i, int (*cmp) (const T&, const T&)) {
+    bool left_exists(false), right_exists(false);
+    std::unique_ptr<Iterator<T>> left(nullptr), right(nullptr);
+    if ((2 * (i - b) + 1) <= (e - b)) {
+        left_exists = true;
+        left = b + (2 * (i - b) + 1);
+    }
+    if ((2 * (i - b) + 2) <= (e - b)) {
+        right_exists = true;
+        right = b + (2 * (i - b) + 2);
+    }
+    std::unique_ptr<Iterator<T>> largest_(nullptr), largest(nullptr);
+    if ((left_exists) && (cmp(**left, *i) > 0))
+        largest_ = left->copy();
+    else
+        largest_ = i.copy();
+    if ((right_exists) && (cmp(**right, **largest_) > 0))
+        largest = right->copy();
+    else
+        largest = largest_->copy();
+    if (*largest != i) {
+        swap(**largest, *i);
+        heapify(b, e, *largest, cmp);
+    }
+}
+
+template <typename T>
 bool check_sorted(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&)) {
     bool check = true;
     auto c = b.copy();
@@ -210,4 +255,16 @@ bool check_sorted(Iterator<T>& b, Iterator<T>& e, int (*cmp) (const T&, const T&
 //    int new_start = start + len;
 //    quick_sort_array(seq, start, len, cmp);
 //    quick_sort_array(seq, new_start, n - len, cmp);
+//}
+//template <typename T>
+//void insert_sort(Sequence<T>& seq, int start, int n, int (*cmp) (const T&, const T&)) {
+//    if ((start + n > seq.size()) || (start < 0) || (n < 0))
+//        throw std::runtime_error("\nInsert_sort Message: index out of range\n");
+//    for (int i = start; i < start + n; ++i) {
+//        int j = i - 1;
+//        while ((j >= 0) && (cmp(seq.get(j), seq.get(j+1))) > 0) {
+//            swap(seq.get(j), seq.get(j+1));
+//            --j;
+//        }
+//    }
 //}

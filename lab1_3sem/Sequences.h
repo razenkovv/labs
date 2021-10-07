@@ -58,6 +58,8 @@ public:
 
     std::unique_ptr<Sequence<T>> get_subsequence(int start, int end);
 
+    std::unique_ptr<ArraySequence<T>> copy();
+
     void concat(Sequence<T> &other_seq);
 
     void insert_at(int index, const T& value);
@@ -80,6 +82,15 @@ std::unique_ptr<Sequence<T>> ArraySequence<T>::get_subsequence(int start, int en
     std::unique_ptr<ArraySequence<T>> res(new ArraySequence<T>{static_cast<unsigned int> (end - start + 1)});
     for (int i = 0; i <= (end - start); ++i) {
         new(&(res->array_data.get(i))) T(array_data.get(i + start));
+    }
+    return res;
+}
+
+template<typename T>
+std::unique_ptr<ArraySequence<T>> ArraySequence<T>::copy() {
+    std::unique_ptr<ArraySequence<T>> res(new ArraySequence<T>{static_cast<unsigned int> (this->size())});
+    for (int i = 0; i < this->size(); ++i) {
+        new(&(res->array_data.get(i))) T(array_data.get(i));
     }
     return res;
 }
